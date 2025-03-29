@@ -1,0 +1,129 @@
+name: Go CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.2'
+        check-latest: true
+
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Go Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Get dependencies
+      run: go mod download
+
+    - name: Run unit tests with coverage
+      run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./pkg/...
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.txt
+        fail_ci_if_error: false
+
+    - name: Run golangci-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: latest
+        args: --timeout=5m
+
+    - name: Prepare environment for examples
+      run: |
+        # 准备示例所需的环境
+        mkdir -p ~/.config/NuGet
+        touch ~/.config/NuGet/NuGet.Config
+        echo '<?xml version="1.0" encoding="utf-8"?><configuration><packageSources><add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" /></packageSources></configuration>' > ~/.config/NuGet/NuGet.Config
+        # 确保temp目录可写
+        chmod 1777 /tmp
+
+    - name: Verify examples can be built
+      run: |
+        # 验证所有示例代码都可以编译
+        set -e
+        echo "Building all examples..."
+        for dir in examples/*/; do
+          if [ -f "${dir}main.go" ]; then
+            echo "Building example: ${dir}"
+            (cd $dir && go build -o /tmp/example-$(basename $dir))
+          fi
+        done
+
+    - name: Run examples
+      run: |
+        # 遍历所有examples目录下的子目录执行示例代码
+        set +e  # 允许部分示例失败
+        failed_examples=()
+        
+        for dir in examples/*/; do
+          if [ -f "${dir}main.go" ]; then
+            example_name=$(basename $dir)
+            echo "===> Running example: ${example_name} <==="
+            
+            # 设置超时时间，防止例子无限运行
+            timeout 30s go run ${dir}main.go > "/tmp/${example_name}.log" 2>&1
+            
+            exit_code=$?
+            if [ $exit_code -eq 0 ]; then
+              echo "✅ Example ${example_name} succeeded"
+              echo "Output:"
+              head -n 20 "/tmp/${example_name}.log"
+              if [ $(wc -l < "/tmp/${example_name}.log") -gt 20 ]; then
+                echo "... (output truncated, see artifact for full log)"
+              fi
+            elif [ $exit_code -eq 124 ]; then
+              echo "⚠️ Example ${example_name} timed out after 30 seconds (may be waiting for input or running indefinitely)"
+              failed_examples+=("${example_name} (timeout)")
+            else
+              echo "❌ Example ${example_name} failed with exit code $exit_code"
+              echo "Error output:"
+              cat "/tmp/${example_name}.log"
+              failed_examples+=("${example_name} (exit code $exit_code)")
+            fi
+            echo ""
+          fi
+        done
+        
+        # 保存所有日志
+        mkdir -p example-logs
+        cp /tmp/*.log example-logs/ || true
+        
+        # 报告失败的示例
+        if [ ${#failed_examples[@]} -ne 0 ]; then
+          echo "The following examples failed:"
+          for example in "${failed_examples[@]}"; do
+            echo " - $example"
+          done
+          # 不要因为示例失败而导致整个CI失败，但记录结果
+          echo "::warning::${#failed_examples[@]} examples failed to run"
+        else
+          echo "✅ All examples executed successfully!"
+        fi
+
+    - name: Upload example logs
+      uses: actions/upload-artifact@v3
+      with:
+        name: example-logs
+        path: example-logs/
+        retention-days: 7 

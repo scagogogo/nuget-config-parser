@@ -1,0 +1,84 @@
+name: Scheduled Tests
+
+on:
+  schedule:
+    # 每周一早上6点运行（UTC时间）
+    - cron: '0 6 * * 1'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  matrix-test:
+    name: Test on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.19', '1.20', '1.21', '1.22', '1.23.2']
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+    - name: Set up Go ${{ matrix.go-version }}
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Go Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-${{ matrix.go-version }}-
+
+    - name: Get dependencies
+      run: go mod download
+
+    - name: Run tests
+      run: go test -v ./pkg/...
+
+    # 只在最新版本的Go上运行示例
+    - name: Run examples
+      if: matrix.go-version == '1.23.2'
+      run: |
+        # Windows需要不同的处理方式
+        if [ "${{ matrix.os }}" = "windows-latest" ]; then
+          # Windows版本
+          for dir in examples/*/; do
+            if [ -f "${dir}main.go" ]; then
+              echo "Running example: ${dir}"
+              cd $dir
+              go run main.go
+              cd -
+            fi
+          done
+        else
+          # Linux/MacOS版本
+          for dir in examples/*/; do
+            if [ -f "${dir}main.go" ]; then
+              echo "Running example: ${dir}"
+              # 设置超时时间
+              timeout 30s go run ${dir}main.go || true
+            fi
+          done
+        fi
+      shell: bash
+
+  report:
+    name: Send Report
+    needs: matrix-test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+    - name: Send notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_TITLE: "Scheduled Test Results"
+        SLACK_MESSAGE: "Compatibility test completed. Check results at GitHub."
+        SLACK_COLOR: ${{ job.status }}
+      if: ${{ env.SLACK_WEBHOOK != '' }} 
