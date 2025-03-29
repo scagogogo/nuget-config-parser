@@ -3,7 +3,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -13,9 +12,9 @@ import (
 )
 
 func main() {
-	// 1. 创建临时目录和配置文件
+	// 1. 创建临时目录用于保存配置
 	// -----------------------------------------------
-	tempDir, err := ioutil.TempDir("", "nuget-credentials-example-*")
+	tempDir, err := os.MkdirTemp("", "nuget-credentials-example-*")
 	if err != nil {
 		log.Fatalf("创建临时目录失败: %v", err)
 	}

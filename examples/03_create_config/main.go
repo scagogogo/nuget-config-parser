@@ -3,7 +3,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -15,7 +14,7 @@ import (
 func main() {
 	// 1. 创建临时目录用于保存配置
 	// -----------------------------------------------
-	tempDir, err := ioutil.TempDir("", "nuget-create-example-*")
+	tempDir, err := os.MkdirTemp("", "nuget-create-example-*")
 	if err != nil {
 		log.Fatalf("创建临时目录失败: %v", err)
 	}
@@ -92,7 +91,7 @@ func main() {
 	fmt.Println("\n创建的配置文件内容:")
 
 	// 读取文件内容
-	content, err := ioutil.ReadFile(configPath)
+	content, err := os.ReadFile(configPath)
 	if err != nil {
 		log.Fatalf("读取配置文件失败: %v", err)
 	}
@@ -143,7 +142,7 @@ func main() {
 	// 输出示例: 默认配置已保存到: /tmp/nuget-create-example-123456/Default.NuGet.Config
 
 	// 读取并输出默认配置内容
-	defaultContent, err := ioutil.ReadFile(defaultConfigPath)
+	defaultContent, err := os.ReadFile(defaultConfigPath)
 	if err != nil {
 		log.Fatalf("读取默认配置文件失败: %v", err)
 	}

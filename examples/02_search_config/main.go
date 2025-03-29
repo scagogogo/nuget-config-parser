@@ -3,7 +3,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -17,7 +16,7 @@ func main() {
 	// -----------------------------------------------
 
 	// 创建根临时目录
-	rootDir, err := ioutil.TempDir("", "nuget-search-example-*")
+	rootDir, err := os.MkdirTemp("", "nuget-search-example-*")
 	if err != nil {
 		log.Fatalf("创建临时根目录失败: %v", err)
 	}
@@ -46,7 +45,7 @@ func main() {
 
 	// 创建根项目配置文件
 	rootConfigPath := filepath.Join(rootDir, constants.DefaultNuGetConfigFilename)
-	if err := ioutil.WriteFile(rootConfigPath, []byte(configContent), 0644); err != nil {
+	if err := os.WriteFile(rootConfigPath, []byte(configContent), 0644); err != nil {
 		log.Fatalf("写入根配置文件失败: %v", err)
 	}
 
@@ -58,7 +57,7 @@ func main() {
     <add key="project-source" value="https://nuget.project.com/v3/index.json" />
   </packageSources>
 </configuration>`
-	if err := ioutil.WriteFile(projectConfigPath, []byte(projectConfigContent), 0644); err != nil {
+	if err := os.WriteFile(projectConfigPath, []byte(projectConfigContent), 0644); err != nil {
 		log.Fatalf("写入项目配置文件失败: %v", err)
 	}
 

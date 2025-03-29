@@ -3,7 +3,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -15,7 +14,7 @@ import (
 func main() {
 	// 1. 创建临时目录用于演示
 	// -----------------------------------------------
-	tempDir, err := ioutil.TempDir("", "nuget-serialization-example-*")
+	tempDir, err := os.MkdirTemp("", "nuget-serialization-example-*")
 	if err != nil {
 		log.Fatalf("创建临时目录失败: %v", err)
 	}
@@ -228,8 +227,8 @@ func main() {
 
 	// 保存修改后的配置到新文件
 	modifiedPath := filepath.Join(tempDir, "Modified.NuGet.Config")
-	if err := ioutil.WriteFile(modifiedPath, []byte(modifiedXml), 0644); err != nil {
-		log.Fatalf("保存修改后的配置失败: %v", err)
+	if err := os.WriteFile(modifiedPath, []byte(modifiedXml), 0644); err != nil {
+		log.Fatalf("写入修改后的配置文件失败: %v", err)
 	}
 
 	fmt.Printf("修改后的配置已保存到: %s\n", modifiedPath)

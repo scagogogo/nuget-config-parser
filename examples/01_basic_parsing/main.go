@@ -3,7 +3,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -34,7 +33,7 @@ func main() {
 </configuration>`
 
 	// 创建临时文件
-	tempDir, err := ioutil.TempDir("", "nuget-example-*")
+	tempDir, err := os.MkdirTemp("", "nuget-example-*")
 	if err != nil {
 		log.Fatalf("创建临时目录失败: %v", err)
 	}
@@ -42,7 +41,7 @@ func main() {
 
 	// 保存配置到临时文件
 	configPath := filepath.Join(tempDir, "NuGet.Config")
-	if err := ioutil.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
 		log.Fatalf("写入配置文件失败: %v", err)
 	}
 

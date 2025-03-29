@@ -3,7 +3,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,7 +13,7 @@ import (
 func main() {
 	// 1. 创建临时目录并生成示例配置文件
 	// -----------------------------------------------
-	tempDir, err := ioutil.TempDir("", "nuget-modify-example-*")
+	tempDir, err := os.MkdirTemp("", "nuget-modify-example-*")
 	if err != nil {
 		log.Fatalf("创建临时目录失败: %v", err)
 	}
@@ -39,7 +38,7 @@ func main() {
 </configuration>`
 
 	// 写入初始配置
-	if err := ioutil.WriteFile(configPath, []byte(initialConfigContent), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(initialConfigContent), 0644); err != nil {
 		log.Fatalf("写入配置文件失败: %v", err)
 	}
 
@@ -115,14 +114,14 @@ func main() {
 	// 5. 比较修改前后的配置
 	// -----------------------------------------------
 	fmt.Println("\n修改前的配置内容:")
-	originalContent, err := ioutil.ReadFile(backupPath)
+	originalContent, err := os.ReadFile(backupPath)
 	if err != nil {
 		log.Fatalf("读取原始配置文件失败: %v", err)
 	}
 	fmt.Println(string(originalContent))
 
 	fmt.Println("\n修改后的配置内容:")
-	modifiedContent, err := ioutil.ReadFile(configPath)
+	modifiedContent, err := os.ReadFile(configPath)
 	if err != nil {
 		log.Fatalf("读取修改后的配置文件失败: %v", err)
 	}
@@ -195,9 +194,9 @@ func main() {
 
 // 辅助函数: 复制文件
 func copyFile(src, dst string) error {
-	data, err := ioutil.ReadFile(src)
+	data, err := os.ReadFile(src)
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(dst, data, 0644)
+	return os.WriteFile(dst, data, 0644)
 }

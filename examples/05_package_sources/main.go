@@ -3,7 +3,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -13,9 +12,9 @@ import (
 )
 
 func main() {
-	// 1. 创建临时目录和配置文件
+	// 1. 创建临时目录用于示例
 	// -----------------------------------------------
-	tempDir, err := ioutil.TempDir("", "nuget-sources-example-*")
+	tempDir, err := os.MkdirTemp("", "nuget-sources-example-*")
 	if err != nil {
 		log.Fatalf("创建临时目录失败: %v", err)
 	}
@@ -209,7 +208,7 @@ func main() {
 	// 11. 打印完整配置
 	// -----------------------------------------------
 	fmt.Println("\n最终配置文件内容:")
-	xmlContent, err := ioutil.ReadFile(configPath)
+	xmlContent, err := os.ReadFile(configPath)
 	if err != nil {
 		log.Fatalf("读取配置文件失败: %v", err)
 	}
