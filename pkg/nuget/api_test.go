@@ -140,7 +140,11 @@ func TestAPIFindConfigFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get current directory: %v", err)
 	}
-	defer os.Chdir(currentDir)
+	defer func() {
+		if err := os.Chdir(currentDir); err != nil {
+			t.Fatalf("Failed to restore directory: %v", err)
+		}
+	}()
 
 	// 切换到临时目录
 	if err := os.Chdir(tempDir); err != nil {
@@ -179,7 +183,11 @@ func TestAPIFindAndParseConfig(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get current directory: %v", err)
 	}
-	defer os.Chdir(currentDir)
+	defer func() {
+		if err := os.Chdir(currentDir); err != nil {
+			t.Fatalf("Failed to restore directory: %v", err)
+		}
+	}()
 
 	// 切换到临时目录
 	if err := os.Chdir(tempDir); err != nil {
