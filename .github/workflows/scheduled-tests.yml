@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go-version: ['1.19', '1.20', '1.21', '1.22', '1.23.2']
+        go-version: ['1.19', '1.20', '1.21', '1.22']
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
@@ -43,7 +43,7 @@ jobs:
 
     # 只在最新版本的Go上运行示例
     - name: Run examples
-      if: matrix.go-version == '1.23.2'
+      if: matrix.go-version == '1.22'
       run: |
         # Windows需要不同的处理方式
         if [ "${{ matrix.os }}" = "windows-latest" ]; then
