@@ -76,7 +76,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("获取当前目录失败: %v", err)
 	}
-	defer os.Chdir(originalDir) // 确保最后恢复原始目录
+	defer func() {
+		if err := os.Chdir(originalDir); err != nil {
+			log.Fatalf("恢复原始目录失败: %v", err)
+		}
+	}()
 
 	if err := os.Chdir(subprojectDir); err != nil {
 		log.Fatalf("切换到子项目目录失败: %v", err)

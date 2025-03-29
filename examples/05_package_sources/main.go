@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/scagogogo/nuget-config-parser/pkg/nuget"
 	"github.com/scagogogo/nuget-config-parser/pkg/types"
@@ -46,7 +47,11 @@ func main() {
 
 	// 2.3 添加本地文件夹源
 	fmt.Println("- 添加本地文件夹源 (local-packages)...")
-	api.AddPackageSource(config, "local-packages", "C:\\LocalPackages", "")
+	localPackagePath := filepath.Join("C:", "LocalPackages")
+	if runtime.GOOS != "windows" {
+		localPackagePath = "/tmp/LocalPackages"
+	}
+	api.AddPackageSource(config, "local-packages", localPackagePath, "")
 
 	// 2.4 添加旧版NuGet源（V2 API）
 	fmt.Println("- 添加旧版V2 API源 (legacy-v2)...")

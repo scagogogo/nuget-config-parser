@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/scagogogo/nuget-config-parser/pkg/nuget"
 	"github.com/scagogogo/nuget-config-parser/pkg/types"
@@ -46,7 +47,7 @@ func main() {
 				// 添加本地包源
 				{
 					Key:   "local",
-					Value: "C:\\LocalPackages",
+					Value: getLocalPath(),
 				},
 			},
 		},
@@ -71,7 +72,11 @@ func main() {
 	// 6. 添加配置选项
 	// -----------------------------------------------
 	// 设置全局包文件夹
-	api.AddConfigOption(config, "globalPackagesFolder", "%USERPROFILE%\\.nuget\\packages")
+	globalPackagesPath := "%USERPROFILE%\\.nuget\\packages"
+	if runtime.GOOS != "windows" {
+		globalPackagesPath = "$HOME/.nuget/packages"
+	}
+	api.AddConfigOption(config, "globalPackagesFolder", globalPackagesPath)
 	// 设置允许的包格式版本
 	api.AddConfigOption(config, "allowedPackageFormats", "nupkg")
 
@@ -159,4 +164,12 @@ func main() {
 	//     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
 	//   </activePackageSource>
 	// </configuration>
+}
+
+// 获取适合当前操作系统的本地路径
+func getLocalPath() string {
+	if runtime.GOOS == "windows" {
+		return "C:\\LocalPackages"
+	}
+	return "/tmp/LocalPackages"
 }

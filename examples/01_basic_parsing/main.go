@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/scagogogo/nuget-config-parser/pkg/nuget"
 )
@@ -19,7 +20,7 @@ func main() {
 <configuration>
   <packageSources>
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
-    <add key="localSource" value="C:\NuGet\LocalPackages" />
+    <add key="localSource" value="` + getLocalPath() + `" />
   </packageSources>
   <disabledPackageSources>
     <add key="localSource" value="true" />
@@ -28,7 +29,7 @@ func main() {
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
   </activePackageSource>
   <config>
-    <add key="globalPackagesFolder" value="%USERPROFILE%\.nuget\packages" />
+    <add key="globalPackagesFolder" value="` + getGlobalPackagesPath() + `" />
   </config>
 </configuration>`
 
@@ -121,4 +122,20 @@ func main() {
 	// 输出示例:
 	// 从字符串解析配置:
 	// 成功从字符串解析配置，包含 2 个包源
+}
+
+// 获取适合当前操作系统的本地路径
+func getLocalPath() string {
+	if runtime.GOOS == "windows" {
+		return "C:\\NuGet\\LocalPackages"
+	}
+	return "/tmp/NuGet/LocalPackages"
+}
+
+// 获取适合当前操作系统的全局包文件夹路径
+func getGlobalPackagesPath() string {
+	if runtime.GOOS == "windows" {
+		return "%USERPROFILE%\\.nuget\\packages"
+	}
+	return "$HOME/.nuget/packages"
 }

@@ -53,11 +53,14 @@ jobs:
     - name: Prepare environment for examples
       run: |
         # 准备示例所需的环境
+        set +e  # 允许命令失败而不中止整个工作流
         mkdir -p ~/.config/NuGet
         touch ~/.config/NuGet/NuGet.Config
         echo '<?xml version="1.0" encoding="utf-8"?><configuration><packageSources><add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" /></packageSources></configuration>' > ~/.config/NuGet/NuGet.Config
         # 确保temp目录可写
-        chmod 1777 /tmp
+        chmod 1777 /tmp || true
+        set -e  # 恢复正常的错误处理
+      continue-on-error: true  # 即使这个步骤失败，也继续执行后续步骤
 
     - name: Verify examples can be built
       run: |
