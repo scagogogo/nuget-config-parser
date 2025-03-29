@@ -253,8 +253,15 @@ func TestFindAndParseConfig(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get current directory: %v", err)
 	}
-	defer os.Chdir(currentDir)
-	os.Chdir(tempDir)
+	defer func() {
+		if err := os.Chdir(currentDir); err != nil {
+			t.Fatalf("Failed to restore directory: %v", err)
+		}
+	}()
+
+	if err := os.Chdir(tempDir); err != nil {
+		t.Fatalf("Failed to change to temp directory: %v", err)
+	}
 
 	// 创建一个自定义的解析器，只搜索临时目录中的文件
 	parser := &ConfigParser{

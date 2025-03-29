@@ -212,7 +212,9 @@ func TestFindProjectConfig(t *testing.T) {
 	// 创建嵌套目录
 	subDir := filepath.Join(tempDir, "sub")
 	subSubDir := filepath.Join(subDir, "subsub")
-	os.MkdirAll(subSubDir, 0755)
+	if err := os.MkdirAll(subSubDir, 0755); err != nil {
+		t.Fatalf("Failed to create subdirectories: %v", err)
+	}
 
 	// 在根目录创建配置文件
 	rootConfigPath := filepath.Join(tempDir, constants.DefaultNuGetConfigFilename)

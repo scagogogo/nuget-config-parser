@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/scagogogo/nuget-config-parser/pkg/constants"
-	"github.com/scagogogo/nuget-config-parser/pkg/finder"
 	"github.com/scagogogo/nuget-config-parser/pkg/parser"
 	nugetTesting "github.com/scagogogo/nuget-config-parser/pkg/testing"
 	"github.com/scagogogo/nuget-config-parser/pkg/types"
@@ -316,17 +315,4 @@ func TestInitializeDefaultConfig(t *testing.T) {
 	if config.PackageSources.Add[0].Key != "nuget.org" {
 		t.Errorf("Initialized source key = %q, want %q", config.PackageSources.Add[0].Key, "nuget.org")
 	}
-}
-
-// 模拟 ConfigFinder 实现
-type mockFinder struct {
-	finder.ConfigFinder
-	mockFindAllConfigFiles func() []string
-}
-
-func (m *mockFinder) FindAllConfigFiles() []string {
-	if m.mockFindAllConfigFiles != nil {
-		return m.mockFindAllConfigFiles()
-	}
-	return nil
 }
