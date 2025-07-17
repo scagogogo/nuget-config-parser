@@ -4,6 +4,7 @@ package nuget
 import (
 	"io"
 
+	"github.com/scagogogo/nuget-config-parser/pkg/editor"
 	"github.com/scagogogo/nuget-config-parser/pkg/finder"
 	"github.com/scagogogo/nuget-config-parser/pkg/manager"
 	"github.com/scagogogo/nuget-config-parser/pkg/parser"
@@ -1053,4 +1054,105 @@ func (a *API) GetConfigOption(config *types.NuGetConfig, key string) string {
 //	fmt.Println("XML 有效且可以正确解析")
 func (a *API) SerializeToXML(config *types.NuGetConfig) (string, error) {
 	return a.Parser.SerializeToXML(config)
+}
+
+// ParseFromFileWithPositions 从文件解析配置并记录位置信息
+//
+// ParseFromFileWithPositions 使用位置感知解析器读取指定路径的文件内容，
+// 并将其解析为 NuGet 配置对象，同时记录每个元素的位置信息。
+// 这个方法返回的 ParseResult 可以用于创建位置感知的编辑器。
+//
+// 参数:
+//   - filePath: 配置文件的路径，可以是绝对路径或相对路径
+//
+// 返回值:
+//   - *parser.ParseResult: 包含配置对象、位置信息和原始内容的解析结果
+//   - error: 如果解析过程中发生错误，则返回相应的错误；如果成功则为 nil
+//
+// 示例:
+//
+//	api := nuget.NewAPI()
+//
+//	// 解析配置文件并获取位置信息
+//	parseResult, err := api.ParseFromFileWithPositions("/path/to/NuGet.Config")
+//	if err != nil {
+//	    fmt.Printf("解析失败: %v\n", err)
+//	    return
+//	}
+//
+//	// 创建位置感知编辑器
+//	editor := api.CreatePositionAwareEditor(parseResult)
+//
+//	// 执行编辑操作
+//	err = editor.AddPackageSource("new-source", "https://example.com/v3/index.json", "3")
+//	if err != nil {
+//	    fmt.Printf("添加包源失败: %v\n", err)
+//	    return
+//	}
+//
+//	// 应用编辑并获取修改后的内容
+//	modifiedContent, err := editor.ApplyEdits()
+//	if err != nil {
+//	    fmt.Printf("应用编辑失败: %v\n", err)
+//	    return
+//	}
+func (a *API) ParseFromFileWithPositions(filePath string) (*parser.ParseResult, error) {
+	positionAwareParser := parser.NewPositionAwareParser()
+	return positionAwareParser.ParseFromFileWithPositions(filePath)
+}
+
+// CreateConfigEditor 创建位置感知编辑器
+//
+// CreateConfigEditor 基于解析结果创建一个位置感知的配置编辑器。
+// 这个编辑器可以进行精确的文本编辑，保持原始文件的格式和缩进，
+// 最小化编辑后的diff。
+//
+// 参数:
+//   - parseResult: 包含位置信息的解析结果
+//
+// 返回值:
+//   - *editor.ConfigEditor: 位置感知编辑器实例
+//
+// 示例:
+//
+//	api := nuget.NewAPI()
+//
+//	// 解析配置文件
+//	parseResult, err := api.ParseFromFileWithPositions("/path/to/NuGet.Config")
+//	if err != nil {
+//	    fmt.Printf("解析失败: %v\n", err)
+//	    return
+//	}
+//
+//	// 创建编辑器
+//	editor := api.CreateConfigEditor(parseResult)
+//
+//	// 添加包源
+//	err = editor.AddPackageSource("custom-source", "https://custom.com/v3/index.json", "3")
+//	if err != nil {
+//	    fmt.Printf("添加包源失败: %v\n", err)
+//	    return
+//	}
+//
+//	// 更新包源URL
+//	err = editor.UpdatePackageSourceURL("existing-source", "https://new-url.com/v3/index.json")
+//	if err != nil {
+//	    fmt.Printf("更新包源失败: %v\n", err)
+//	    return
+//	}
+//
+//	// 应用所有编辑
+//	modifiedContent, err := editor.ApplyEdits()
+//	if err != nil {
+//	    fmt.Printf("应用编辑失败: %v\n", err)
+//	    return
+//	}
+//
+//	// 保存修改后的内容
+//	err = os.WriteFile("/path/to/NuGet.Config", modifiedContent, 0644)
+//	if err != nil {
+//	    fmt.Printf("保存文件失败: %v\n", err)
+//	}
+func (a *API) CreateConfigEditor(parseResult *parser.ParseResult) *editor.ConfigEditor {
+	return editor.NewConfigEditor(parseResult)
 }
