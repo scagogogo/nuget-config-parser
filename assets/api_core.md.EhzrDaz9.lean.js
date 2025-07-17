@@ -1,0 +1,1 @@
+import{_ as i,c as a,o as n,ag as t}from"./chunks/framework.DBa8q30c.js";const d=JSON.parse('{"title":"Core API","description":"","frontmatter":{},"headers":[],"relativePath":"api/core.md","filePath":"api/core.md"}'),e={name:"api/core.md"};function h(l,s,k,p,r,o){return n(),a("div",null,s[0]||(s[0]=[t("",247)]))}const E=i(e,[["render",h]]);export{d as __pageData,E as default};

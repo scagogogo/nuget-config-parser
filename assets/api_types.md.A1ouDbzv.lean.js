@@ -1,0 +1,1 @@
+import{_ as i,c as a,o as n,ag as t}from"./chunks/framework.DBa8q30c.js";const o=JSON.parse('{"title":"Types API","description":"","frontmatter":{},"headers":[],"relativePath":"api/types.md","filePath":"api/types.md"}'),l={name:"api/types.md"};function e(h,s,p,k,r,E){return n(),a("div",null,s[0]||(s[0]=[t("",81)]))}const g=i(l,[["render",e]]);export{o as __pageData,g as default};
