@@ -4,43 +4,56 @@
 [![Scheduled Tests](https://github.com/scagogogo/nuget-config-parser/actions/workflows/scheduled-tests.yml/badge.svg)](https://github.com/scagogogo/nuget-config-parser/actions/workflows/scheduled-tests.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/scagogogo/nuget-config-parser)](https://goreportcard.com/report/github.com/scagogogo/nuget-config-parser)
 [![GoDoc](https://godoc.org/github.com/scagogogo/nuget-config-parser?status.svg)](https://godoc.org/github.com/scagogogo/nuget-config-parser)
+[![Documentation](https://img.shields.io/badge/docs-online-blue.svg)](https://scagogogo.github.io/nuget-config-parser/)
 
-这个库提供了解析和操作 NuGet 配置文件 (NuGet.Config) 的功能。它可以帮助你在 Go 应用程序中读取、修改和创建 NuGet 配置文件，支持所有主要的 NuGet 配置功能。
+A comprehensive Go library for parsing and manipulating NuGet configuration files (NuGet.Config). This library helps you read, modify, and create NuGet configuration files in Go applications, supporting all major NuGet configuration features.
 
-## 📑 目录
+**[📖 Online Documentation](https://scagogogo.github.io/nuget-config-parser/)** | **[🇨🇳 中文文档](README_zh.md)**
 
-- [功能特点](#功能特点)
-- [安装](#安装)
-- [快速开始](#快速开始)
-- [示例](#示例)
-- [API 参考](#api-参考)
-- [架构](#架构)
-- [贡献](#贡献)
-- [许可证](#许可证)
+## 📚 Documentation
 
-## ✨ 功能特点
+Complete documentation is available online at **https://scagogogo.github.io/nuget-config-parser/**
 
-- **配置文件解析** - 解析 NuGet.Config 文件，支持从文件、字符串或 Reader 读取
-- **配置文件查找** - 查找系统中的 NuGet 配置文件，支持项目级和全局配置
-- **包源管理** - 添加、移除、获取包源信息
-- **凭证管理** - 设置和管理包源的用户名/密码凭证
-- **包源启用与禁用** - 启用/禁用包源
-- **活跃包源管理** - 设置和获取活跃包源
-- **配置选项管理** - 管理全局配置选项，如代理设置、包文件夹路径等
-- **配置序列化** - 将配置对象序列化为标准 XML 格式
-- **跨平台支持** - 支持 Windows、Linux 和 macOS
+The documentation includes:
+- **Getting Started Guide** - Step-by-step introduction
+- **API Reference** - Complete API documentation with examples
+- **Examples** - Real-world usage examples
+- **Best Practices** - Recommended patterns and practices
+- **Multi-language Support** - Available in English and Chinese
 
-## 🚀 安装
+## 📑 Table of Contents
 
-使用 Go 模块安装（推荐）：
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Examples](#examples)
+- [API Reference](#api-reference)
+- [Architecture](#architecture)
+- [Contributing](#contributing)
+- [License](#license)
+
+## ✨ Features
+
+- **Configuration Parsing** - Parse NuGet.Config files from files, strings, or io.Reader
+- **Smart File Discovery** - Find NuGet configuration files in your system, supporting project-level and global configurations
+- **Package Source Management** - Add, remove, enable/disable package sources with full protocol version support
+- **Credential Management** - Securely manage username/password credentials for private package sources
+- **Configuration Options** - Manage global configuration options like proxy settings, package folder paths, etc.
+- **Position-Aware Editing** - Edit configuration files while preserving original formatting and minimizing diffs
+- **Serialization Support** - Convert configuration objects to standard XML format with proper indentation
+- **Cross-Platform** - Full support for Windows, Linux, and macOS with platform-specific configuration paths
+
+## 🚀 Installation
+
+Install using Go modules (recommended):
 
 ```bash
 go get github.com/scagogogo/nuget-config-parser
 ```
 
-## 🏁 快速开始
+## 🏁 Quick Start
 
-以下是一个简单的示例，演示如何解析和使用 NuGet 配置文件：
+Here's a simple example demonstrating how to parse and use NuGet configuration files:
 
 ```go
 package main
@@ -53,190 +66,219 @@ import (
 )
 
 func main() {
-    // 创建 API 实例
+    // Create API instance
     api := nuget.NewAPI()
     
-    // 查找第一个可用的配置文件
+    // Find the first available configuration file
     configPath, err := api.FindConfigFile()
     if err != nil {
-        log.Fatalf("找不到配置文件: %v", err)
+        log.Fatalf("No configuration file found: %v", err)
     }
     
-    // 解析配置文件
+    // Parse the configuration file
     config, err := api.ParseFromFile(configPath)
     if err != nil {
-        log.Fatalf("解析配置失败: %v", err)
+        log.Fatalf("Failed to parse configuration: %v", err)
     }
     
-    // 显示配置信息
-    fmt.Printf("配置文件: %s\n", configPath)
-    fmt.Printf("包含 %d 个包源\n", len(config.PackageSources.Add))
+    // Display configuration information
+    fmt.Printf("Configuration file: %s\n", configPath)
+    fmt.Printf("Contains %d package sources\n", len(config.PackageSources.Add))
     
-    // 显示包源列表
+    // Display package source list
     for _, source := range config.PackageSources.Add {
         fmt.Printf("- %s: %s\n", source.Key, source.Value)
         
-        // 检查包源是否禁用
+        // Check if package source is disabled
         if api.IsPackageSourceDisabled(config, source.Key) {
-            fmt.Printf("  状态: 已禁用\n")
+            fmt.Printf("  Status: Disabled\n")
         } else {
-            fmt.Printf("  状态: 已启用\n")
+            fmt.Printf("  Status: Enabled\n")
         }
     }
 }
 ```
 
-## 📝 示例
+## 📝 Examples
 
-本项目提供了多个完整示例，展示不同的功能和用例。所有示例都位于 [examples](examples/) 目录中：
+This project provides multiple complete examples demonstrating different features and use cases. All examples are located in the [examples](examples/) directory:
 
-1. **[基本解析](examples/01_basic_parsing)** - 解析配置文件并访问其内容
-2. **[查找配置](examples/02_search_config)** - 在系统中查找 NuGet 配置文件
-3. **[创建配置](examples/03_create_config)** - 创建新的 NuGet 配置
-4. **[修改配置](examples/04_modify_config)** - 修改现有的 NuGet 配置
-5. **[包源管理](examples/05_package_sources)** - 包源相关操作
-6. **[凭证管理](examples/06_credentials)** - 管理包源凭证
-7. **[配置选项](examples/07_config_options)** - 管理全局配置选项
-8. **[序列化](examples/08_serialization)** - 配置序列化和反序列化
+1. **[Basic Parsing](examples/01_basic_parsing)** - Parse configuration files and access their content
+2. **[Finding Configs](examples/02_search_config)** - Find NuGet configuration files in your system
+3. **[Creating Configs](examples/03_create_config)** - Create new NuGet configurations
+4. **[Modifying Configs](examples/04_modify_config)** - Modify existing NuGet configurations
+5. **[Package Sources](examples/05_package_sources)** - Package source related operations
+6. **[Credentials](examples/06_credentials)** - Manage package source credentials
+7. **[Config Options](examples/07_config_options)** - Manage global configuration options
+8. **[Serialization](examples/08_serialization)** - Configuration serialization and deserialization
+9. **[Position-Aware Editing](examples/09_position_aware_editing)** - Precise editing based on position information
 
-运行示例：
+Run examples:
 
 ```bash
 go run examples/01_basic_parsing/main.go
 ```
 
-有关示例的详细说明，请参阅 [examples/README.md](examples/README.md)。
+For detailed example descriptions, see [examples/README.md](examples/README.md).
 
-## 📚 API 参考
+## 📚 API Reference
 
-### 核心 API
+### Core API
 
 ```go
-// 创建新的 API 实例
+// Create new API instance
 api := nuget.NewAPI()
 ```
 
-### 解析和查找
+### Parsing and Finding
 
 ```go
-// 从文件解析配置
+// Parse configuration from file
 config, err := api.ParseFromFile(filePath)
 
-// 从字符串解析配置
+// Parse configuration from string
 config, err := api.ParseFromString(xmlContent)
 
-// 从 io.Reader 解析配置
+// Parse configuration from io.Reader
 config, err := api.ParseFromReader(reader)
 
-// 查找第一个可用的配置文件
+// Find first available configuration file
 configPath, err := api.FindConfigFile()
 
-// 查找所有可用的配置文件
+// Find all available configuration files
 configPaths := api.FindAllConfigFiles()
 
-// 在项目目录中查找配置文件
+// Find configuration file in project directory
 projectConfig, err := api.FindProjectConfig(startDir)
 
-// 查找并解析配置
+// Find and parse configuration
 config, configPath, err := api.FindAndParseConfig()
 ```
 
-### 包源管理
+### Package Source Management
 
 ```go
-// 添加或更新包源
+// Add or update package source
 api.AddPackageSource(config, "sourceName", "https://source-url", "3")
 
-// 移除包源
+// Remove package source
 removed := api.RemovePackageSource(config, "sourceName")
 
-// 获取特定包源
+// Get specific package source
 source := api.GetPackageSource(config, "sourceName")
 
-// 获取所有包源
+// Get all package sources
 sources := api.GetAllPackageSources(config)
 
-// 设置活跃包源
-err := api.SetActivePackageSource(config, "sourceName")
+// Enable/disable package sources
+api.EnablePackageSource(config, "sourceName")
+api.DisablePackageSource(config, "sourceName")
+isDisabled := api.IsPackageSourceDisabled(config, "sourceName")
 ```
 
-### 凭证管理
+### Credential Management
 
 ```go
-// 添加凭证
+// Add credentials
 api.AddCredential(config, "sourceName", "username", "password")
 
-// 移除凭证
+// Remove credentials
 removed := api.RemoveCredential(config, "sourceName")
+
+// Get credentials
+credential := api.GetCredential(config, "sourceName")
 ```
 
-### 包源启用/禁用
+### Configuration Options
 
 ```go
-// 禁用包源
-api.DisablePackageSource(config, "sourceName")
+// Add configuration option
+api.AddConfigOption(config, "globalPackagesFolder", "/custom/path")
 
-// 启用包源
-enabled := api.EnablePackageSource(config, "sourceName")
-
-// 检查包源是否禁用
-disabled := api.IsPackageSourceDisabled(config, "sourceName")
-```
-
-### 配置选项
-
-```go
-// 添加或更新配置选项
-api.AddConfigOption(config, "globalPackagesFolder", "/path/to/packages")
-
-// 移除配置选项
+// Remove configuration option
 removed := api.RemoveConfigOption(config, "globalPackagesFolder")
 
-// 获取配置选项值
+// Get configuration option
 value := api.GetConfigOption(config, "globalPackagesFolder")
 ```
 
-### 创建和保存
+### Active Package Source
 
 ```go
-// 创建默认配置
-config := api.CreateDefaultConfig()
+// Set active package source
+api.SetActivePackageSource(config, "sourceName", "https://source-url")
 
-// 在指定路径创建默认配置
-err := api.InitializeDefaultConfig(filePath)
-
-// 保存配置到文件
-err := api.SaveConfig(config, filePath)
-
-// 将配置序列化为 XML 字符串
-xmlString, err := api.SerializeToXML(config)
+// Get active package source
+activeSource := api.GetActivePackageSource(config)
 ```
 
-## 🏗️ 架构
+### Creation and Saving
 
-该库由以下主要组件组成：
+```go
+// Create default configuration
+config := api.CreateDefaultConfig()
 
-- **pkg/nuget**: 主要 API 包，提供用户接口
-- **pkg/parser**: 配置解析器，负责 XML 解析
-- **pkg/finder**: 配置查找器，负责查找配置文件
-- **pkg/manager**: 配置管理器，负责修改配置
-- **pkg/types**: 数据类型定义
-- **pkg/constants**: 常量定义
-- **pkg/utils**: 工具函数
-- **pkg/errors**: 错误类型定义
+// Create default configuration at specified path
+err := api.InitializeDefaultConfig(filePath)
 
-## 🤝 贡献
+// Save configuration to file
+err := api.SaveConfig(config, filePath)
 
-欢迎贡献！如果您想为这个项目做出贡献：
+// Serialize configuration to XML string
+xmlString, err := api.SerializeToXML(config)
 
-1. Fork 本仓库
-2. 创建您的特性分支 (`git checkout -b feature/amazing-feature`)
-3. 提交您的更改 (`git commit -m 'Add some amazing feature'`)
-4. 推送到分支 (`git push origin feature/amazing-feature`)
-5. 开启一个 Pull Request
+// Position-aware editing (preserves original formatting, minimizes diff)
+parseResult, err := api.ParseFromFileWithPositions(configPath)
+editor := api.CreateConfigEditor(parseResult)
+err = editor.AddPackageSource("new-source", "https://example.com/v3/index.json", "3")
+modifiedContent, err := editor.ApplyEdits()
+```
 
-在提交 PR 前，请确保代码通过了测试并且符合代码风格规范。
+## 🏗️ Architecture
 
-## 📄 许可证
+The library consists of the following main components:
 
-该项目采用 MIT 许可证。有关详细信息，请参阅 [LICENSE](LICENSE) 文件。
+- **pkg/nuget**: Main API package providing the user interface
+- **pkg/parser**: Configuration parser responsible for XML parsing
+- **pkg/finder**: Configuration finder responsible for locating configuration files
+- **pkg/manager**: Configuration manager responsible for modifying configurations
+- **pkg/editor**: Position-aware editor for precise configuration editing
+- **pkg/types**: Data type definitions
+- **pkg/constants**: Constant definitions
+- **pkg/utils**: Utility functions
+- **pkg/errors**: Error type definitions
+
+## 📖 Documentation
+
+Complete documentation is available online:
+
+**🌐 [Documentation Website](https://scagogogo.github.io/nuget-config-parser/)**
+
+The documentation includes:
+- **Getting Started Guide** - Step-by-step introduction
+- **API Reference** - Complete API documentation
+- **Examples** - Real-world usage examples
+- **Best Practices** - Recommended patterns and practices
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on:
+
+- How to report bugs
+- How to suggest new features
+- How to submit pull requests
+- Development setup and guidelines
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Inspired by the official NuGet configuration system
+- Built with Go's excellent standard library
+- Thanks to all contributors and users of this library
+
+---
+
+**[📖 Full Documentation](https://scagogogo.github.io/nuget-config-parser/)** | **[🇨🇳 中文版本](README_zh.md)**
