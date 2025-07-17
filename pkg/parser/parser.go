@@ -346,39 +346,6 @@ func (p *ConfigParser) advancePosition(content string, start, end int, line, col
 	}
 }
 
-// parseTag 解析标签内容，提取标签名、属性和是否自闭合
-func (p *ConfigParser) parseTag(tagContent string) (string, map[string]string, bool) {
-	tagContent = strings.TrimSpace(tagContent)
-	selfClose := strings.HasSuffix(tagContent, "/")
-	if selfClose {
-		tagContent = strings.TrimSuffix(tagContent, "/")
-		tagContent = strings.TrimSpace(tagContent)
-	}
-
-	parts := strings.Fields(tagContent)
-	if len(parts) == 0 {
-		return "", make(map[string]string), selfClose
-	}
-
-	tagName := parts[0]
-	attributes := make(map[string]string)
-
-	// 解析属性
-	attrStr := strings.Join(parts[1:], " ")
-	if attrStr != "" {
-		// 简单的属性解析，支持 key="value" 格式
-		re := regexp.MustCompile(`(\w+)="([^"]*)"`)
-		matches := re.FindAllStringSubmatch(attrStr, -1)
-		for _, match := range matches {
-			if len(match) == 3 {
-				attributes[match[1]] = match[2]
-			}
-		}
-	}
-
-	return tagName, attributes, selfClose
-}
-
 // parseTagWithRanges 解析标签内容并记录属性范围
 func (p *ConfigParser) parseTagWithRanges(tagContent string, baseOffset int) (string, map[string]string, map[string]Range, bool) {
 	tagContent = strings.TrimSpace(tagContent)
