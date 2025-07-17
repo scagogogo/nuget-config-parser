@@ -1,0 +1,14 @@
+{
+  "name": "nuget-config-parser-docs",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Documentation for NuGet Config Parser",
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.0.0"
+  }
+}
