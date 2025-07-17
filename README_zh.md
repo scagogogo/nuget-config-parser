@@ -1,5 +1,7 @@
 # NuGet Config Parser
 
+> **📖 [完整文档和 API 参考](https://scagogogo.github.io/nuget-config-parser/)** | **[🇺🇸 English](README.md)**
+
 [![Go CI](https://github.com/scagogogo/nuget-config-parser/actions/workflows/ci.yml/badge.svg)](https://github.com/scagogogo/nuget-config-parser/actions/workflows/ci.yml)
 [![Scheduled Tests](https://github.com/scagogogo/nuget-config-parser/actions/workflows/scheduled-tests.yml/badge.svg)](https://github.com/scagogogo/nuget-config-parser/actions/workflows/scheduled-tests.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/scagogogo/nuget-config-parser)](https://goreportcard.com/report/github.com/scagogogo/nuget-config-parser)
@@ -8,18 +10,18 @@
 
 这个库提供了解析和操作 NuGet 配置文件 (NuGet.Config) 的功能。它可以帮助你在 Go 应用程序中读取、修改和创建 NuGet 配置文件，支持所有主要的 NuGet 配置功能。
 
-**[📖 在线文档](https://scagogogo.github.io/nuget-config-parser/)** | **[🇺🇸 English](README.md)**
-
 ## 📚 文档
+
+### 🌐 **[在线文档](https://scagogogo.github.io/nuget-config-parser/)**
 
 完整的文档可在线访问：**https://scagogogo.github.io/nuget-config-parser/**
 
 文档包括：
-- **入门指南** - 逐步介绍
-- **API 参考** - 完整的 API 文档和示例
-- **使用示例** - 真实世界的使用示例
-- **最佳实践** - 推荐的模式和做法
-- **多语言支持** - 提供中文和英文版本
+- **📖 [入门指南](https://scagogogo.github.io/nuget-config-parser/zh/guide/getting-started)** - 逐步介绍
+- **🔧 [API 参考](https://scagogogo.github.io/nuget-config-parser/zh/api/)** - 完整的 API 文档和示例
+- **💡 [使用示例](https://scagogogo.github.io/nuget-config-parser/zh/examples/)** - 真实世界的使用示例
+- **⚡ [最佳实践](https://scagogogo.github.io/nuget-config-parser/zh/guide/configuration)** - 推荐的模式和做法
+- **🌍 多语言支持** - 提供中文和英文版本
 
 ## 📑 目录
 
@@ -54,6 +56,8 @@ go get github.com/scagogogo/nuget-config-parser
 ```
 
 ## 🏁 快速开始
+
+> 💡 **详细教程和示例请访问 [快速开始指南](https://scagogogo.github.io/nuget-config-parser/zh/guide/quick-start)**
 
 以下是一个简单的示例，演示如何解析和使用 NuGet 配置文件：
 
@@ -103,6 +107,8 @@ func main() {
 
 ## 📝 示例
 
+> 🔗 **更多示例和详细说明请访问 [示例文档](https://scagogogo.github.io/nuget-config-parser/zh/examples/)**
+
 本项目提供了多个完整示例，展示不同的功能和用例。所有示例都位于 [examples](examples/) 目录中：
 
 1. **[基本解析](examples/01_basic_parsing)** - 解析配置文件并访问其内容
@@ -124,6 +130,8 @@ go run examples/01_basic_parsing/main.go
 有关示例的详细说明，请参阅 [examples/README.md](examples/README.md)。
 
 ## 📚 API 参考
+
+> 📖 **完整的 API 文档和示例：[API 参考](https://scagogogo.github.io/nuget-config-parser/zh/api/)**
 
 ### 核心 API
 

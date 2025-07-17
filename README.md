@@ -1,5 +1,7 @@
 # NuGet Config Parser
 
+> **📖 [Complete Documentation & API Reference](https://scagogogo.github.io/nuget-config-parser/)** | **[🇨🇳 中文文档](README_zh.md)**
+
 [![Go CI](https://github.com/scagogogo/nuget-config-parser/actions/workflows/ci.yml/badge.svg)](https://github.com/scagogogo/nuget-config-parser/actions/workflows/ci.yml)
 [![Scheduled Tests](https://github.com/scagogogo/nuget-config-parser/actions/workflows/scheduled-tests.yml/badge.svg)](https://github.com/scagogogo/nuget-config-parser/actions/workflows/scheduled-tests.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/scagogogo/nuget-config-parser)](https://goreportcard.com/report/github.com/scagogogo/nuget-config-parser)
@@ -8,18 +10,18 @@
 
 A comprehensive Go library for parsing and manipulating NuGet configuration files (NuGet.Config). This library helps you read, modify, and create NuGet configuration files in Go applications, supporting all major NuGet configuration features.
 
-**[📖 Online Documentation](https://scagogogo.github.io/nuget-config-parser/)** | **[🇨🇳 中文文档](README_zh.md)**
-
 ## 📚 Documentation
 
-Complete documentation is available online at **https://scagogogo.github.io/nuget-config-parser/**
+### 🌐 **[Online Documentation](https://scagogogo.github.io/nuget-config-parser/)**
+
+Complete documentation is available at: **https://scagogogo.github.io/nuget-config-parser/**
 
 The documentation includes:
-- **Getting Started Guide** - Step-by-step introduction
-- **API Reference** - Complete API documentation with examples
-- **Examples** - Real-world usage examples
-- **Best Practices** - Recommended patterns and practices
-- **Multi-language Support** - Available in English and Chinese
+- **📖 [Getting Started Guide](https://scagogogo.github.io/nuget-config-parser/guide/getting-started)** - Step-by-step introduction
+- **🔧 [API Reference](https://scagogogo.github.io/nuget-config-parser/api/)** - Complete API documentation with examples
+- **💡 [Examples](https://scagogogo.github.io/nuget-config-parser/examples/)** - Real-world usage examples
+- **⚡ [Best Practices](https://scagogogo.github.io/nuget-config-parser/guide/configuration)** - Recommended patterns and practices
+- **🌍 Multi-language Support** - Available in English and Chinese
 
 ## 📑 Table of Contents
 
@@ -52,6 +54,8 @@ go get github.com/scagogogo/nuget-config-parser
 ```
 
 ## 🏁 Quick Start
+
+> 💡 **For detailed tutorials and examples, visit the [Quick Start Guide](https://scagogogo.github.io/nuget-config-parser/guide/quick-start)**
 
 Here's a simple example demonstrating how to parse and use NuGet configuration files:
 
@@ -101,6 +105,8 @@ func main() {
 
 ## 📝 Examples
 
+> 🔗 **More examples and detailed explanations available in the [Examples Documentation](https://scagogogo.github.io/nuget-config-parser/examples/)**
+
 This project provides multiple complete examples demonstrating different features and use cases. All examples are located in the [examples](examples/) directory:
 
 1. **[Basic Parsing](examples/01_basic_parsing)** - Parse configuration files and access their content
@@ -122,6 +128,8 @@ go run examples/01_basic_parsing/main.go
 For detailed example descriptions, see [examples/README.md](examples/README.md).
 
 ## 📚 API Reference
+
+> 📖 **Complete API documentation with examples: [API Reference](https://scagogogo.github.io/nuget-config-parser/api/)**
 
 ### Core API
 
